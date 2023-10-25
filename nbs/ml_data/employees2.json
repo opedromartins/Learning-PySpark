@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "name": "Pedro Henrique Moreira",
+    "salary": 7979.0
+  },
+  {
+    "id": 2,
+    "name": "Jo\u00e3o Miguel da Concei\u00e7\u00e3o",
+    "salary": 5590.0
+  },
+  {
+    "id": 3,
+    "name": "Luiz Miguel Monteiro",
+    "salary": 7854.0
+  },
+  {
+    "id": 4,
+    "name": "Jo\u00e3o Miguel Porto",
+    "salary": 4581.0
+  },
+  {
+    "id": 5,
+    "name": "Dr. Luiz Gustavo Moraes",
+    "salary": 9965.0
+  }
+]

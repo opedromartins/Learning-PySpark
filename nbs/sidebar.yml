@@ -1,0 +1,8 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_Creating-dataframes.ipynb
+      - 01_Reading-csv-files.ipynb
+      - 02_Writing-dataframe-to-csv.ipynb
+      - 03_Reading-json-files.ipynb

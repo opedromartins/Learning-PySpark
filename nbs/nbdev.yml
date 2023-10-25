@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "Learning-PySpark"
+  site-url: "https://opedromartins.github.io/Learning-PySpark"
+  description: ""
+  repo-branch: main
+  repo-url: "https://github.com/opedromartins/Learning-PySpark"
