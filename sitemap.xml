@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://opedromartins.github.io/Learning-PySpark/creating-dataframes.html</loc>
+    <lastmod>2023-10-25T18:20:53.229Z</lastmod>
+  </url>
+  <url>
+    <loc>https://opedromartins.github.io/Learning-PySpark/reading-csv-files.html</loc>
+    <lastmod>2023-10-25T18:20:52.445Z</lastmod>
+  </url>
+  <url>
+    <loc>https://opedromartins.github.io/Learning-PySpark/writing-dataframe-to-csv.html</loc>
+    <lastmod>2023-10-25T18:20:51.077Z</lastmod>
+  </url>
+  <url>
+    <loc>https://opedromartins.github.io/Learning-PySpark/reading-json-files.html</loc>
+    <lastmod>2023-10-25T18:20:51.989Z</lastmod>
+  </url>
+  <url>
+    <loc>https://opedromartins.github.io/Learning-PySpark/index.html</loc>
+    <lastmod>2023-10-25T18:20:52.825Z</lastmod>
+  </url>
+</urlset>

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Learning-PySpark - Writing dataframe to CSV</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Learning-PySpark - Writing dataframe to CSV">
+<meta property="og:description" content="">
+<meta property="og:site-name" content="Learning-PySpark">
+<meta name="twitter:title" content="Learning-PySpark - Writing dataframe to CSV">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Learning-PySpark</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./writing-dataframe-to-csv.html">Writing dataframe to CSV</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Learning PySpark</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./creating-dataframes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Creating Dataframes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reading-csv-files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reading CSV files</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./writing-dataframe-to-csv.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Writing dataframe to CSV</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reading-json-files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reading JSON files</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#writing-dataframe-to-csv-files" id="toc-writing-dataframe-to-csv-files" class="nav-link" data-scroll-target="#writing-dataframe-to-csv-files">Writing dataframe to CSV files</a>
+  <ul class="collapse">
+  <li><a href="#file-structure" id="toc-file-structure" class="nav-link" data-scroll-target="#file-structure">File structure:</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/opedromartins/Learning-PySpark/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Writing dataframe to CSV</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>Based on <a href="https://www.youtube.com/@WafaStudies">WafaStudies</a> PySpark <a href="https://www.youtube.com/playlist?list=PLMWaZteqtEaJFiJ2FyIKK0YEuXwQ9YIS_">tutorial</a>.</p>
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> findspark</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>findspark.init()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder<span class="op">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                    .appName(<span class="st">'Spark'</span>)<span class="op">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                    .master(<span class="st">"local[*]"</span>)<span class="op">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                    .getOrCreate()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> dataframe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>your 131072x1 screen size is bogus. expect trouble
+23/10/25 15:11:26 WARN Utils: Your hostname, PC resolves to a loopback address: 127.0.1.1; using 172.29.148.244 instead (on interface eth0)
+23/10/25 15:11:26 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+23/10/25 15:11:28 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+23/10/25 15:11:28 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+23/10/25 15:11:28 WARN Utils: Service 'SparkUI' could not bind on port 4041. Attempting port 4042.</code></pre>
+</div>
+</div>
+</section>
+<section id="writing-dataframe-to-csv-files" class="level2">
+<h2 class="anchored" data-anchor-id="writing-dataframe-to-csv-files">Writing dataframe to CSV files</h2>
+<div class="cell" data-outputid="9a1a4275-8bab-4417-98a1-0734c51a904c" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(dataframe.DataFrame.write)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on property:
+
+    Interface for saving the content of the non-streaming :class:`DataFrame` out into external
+    storage.
+    
+    .. versionadded:: 1.4.0
+    
+    .. versionchanged:: 3.4.0
+        Supports Spark Connect.
+    
+    Returns
+    -------
+    :class:`DataFrameWriter`
+    
+    Examples
+    --------
+    &gt;&gt;&gt; df = spark.createDataFrame([(2, "Alice"), (5, "Bob")], schema=["age", "name"])
+    &gt;&gt;&gt; type(df.write)
+    &lt;class '...readwriter.DataFrameWriter'&gt;
+    
+    Write the DataFrame as a table.
+    
+    &gt;&gt;&gt; _ = spark.sql("DROP TABLE IF EXISTS tab2")
+    &gt;&gt;&gt; df.write.saveAsTable("tab2")
+    &gt;&gt;&gt; _ = spark.sql("DROP TABLE tab2")
+</code></pre>
+</div>
+</div>
+<p>Let’s start creating a dataframe</p>
+<div class="cell" data-outputid="00e09c92-a88e-4342-d470-d4c4965a2894" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.createDataFrame([(<span class="dv">2</span>, <span class="st">"Alice"</span>), (<span class="dv">5</span>, <span class="st">"Bob"</span>)], schema<span class="op">=</span>[<span class="st">"age"</span>, <span class="st">"name"</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df.show()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+-----+
+|age| name|
++---+-----+
+|  2|Alice|
+|  5|  Bob|
++---+-----+
+
+root
+ |-- age: long (nullable = true)
+ |-- name: string (nullable = true)
+</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="a54afa7e-904c-4282-caa4-e5ec68d718ca" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(df.write.csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on method csv in module pyspark.sql.readwriter:
+
+csv(path: str, mode: Optional[str] = None, compression: Optional[str] = None, sep: Optional[str] = None, quote: Optional[str] = None, escape: Optional[str] = None, header: Union[bool, str, NoneType] = None, nullValue: Optional[str] = None, escapeQuotes: Union[bool, str, NoneType] = None, quoteAll: Union[bool, str, NoneType] = None, dateFormat: Optional[str] = None, timestampFormat: Optional[str] = None, ignoreLeadingWhiteSpace: Union[bool, str, NoneType] = None, ignoreTrailingWhiteSpace: Union[bool, str, NoneType] = None, charToEscapeQuoteEscaping: Optional[str] = None, encoding: Optional[str] = None, emptyValue: Optional[str] = None, lineSep: Optional[str] = None) -&gt; None method of pyspark.sql.readwriter.DataFrameWriter instance
+    Saves the content of the :class:`DataFrame` in CSV format at the specified path.
+    
+    .. versionadded:: 2.0.0
+    
+    .. versionchanged:: 3.4.0
+        Supports Spark Connect.
+    
+    Parameters
+    ----------
+    path : str
+        the path in any Hadoop supported file system
+    mode : str, optional
+        specifies the behavior of the save operation when data already exists.
+    
+        * ``append``: Append contents of this :class:`DataFrame` to existing data.
+        * ``overwrite``: Overwrite existing data.
+        * ``ignore``: Silently ignore this operation if data already exists.
+        * ``error`` or ``errorifexists`` (default case): Throw an exception if data already \
+            exists.
+    
+    Other Parameters
+    ----------------
+    Extra options
+        For the extra options, refer to
+        `Data Source Option &lt;https://spark.apache.org/docs/latest/sql-data-sources-csv.html#data-source-option&gt;`_
+        for the version you use.
+    
+        .. # noqa
+    
+    Examples
+    --------
+    Write a DataFrame into a CSV file and read it back.
+    
+    &gt;&gt;&gt; import tempfile
+    &gt;&gt;&gt; with tempfile.TemporaryDirectory() as d:
+    ...     # Write a DataFrame into a CSV file
+    ...     df = spark.createDataFrame([{"age": 100, "name": "Hyukjin Kwon"}])
+    ...     df.write.csv(d, mode="overwrite")
+    ...
+    ...     # Read the CSV file as a DataFrame with 'nullValue' option set to 'Hyukjin Kwon'.
+    ...     spark.read.schema(df.schema).format("csv").option(
+    ...         "nullValue", "Hyukjin Kwon").load(d).show()
+    +---+----+
+    |age|name|
+    +---+----+
+    |100|NULL|
+    +---+----+
+</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.write<span class="op">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>.csv(<span class="st">"df_csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s check the written file:</p>
+<div class="cell" data-outputid="c15ddc5e-5a7d-42b2-bc58-2ef2c19b0153" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>spark.read.schema(df.schema)<span class="op">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>.<span class="bu">format</span>(<span class="st">"csv"</span>)<span class="op">\</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>.load(<span class="st">"df_csv"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+-----+
+|age| name|
++---+-----+
+|  2|Alice|
+|  5|  Bob|
++---+-----+
+</code></pre>
+</div>
+</div>
+<p>What if we want to change the dataframe?</p>
+<div class="cell" data-outputid="32fc53c6-b5ac-4a6f-b5b8-55af6acf5001" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.createDataFrame([(<span class="dv">1</span>, <span class="st">"Goku"</span>), (<span class="dv">2</span>, <span class="st">"Naruto"</span>)], schema<span class="op">=</span>[<span class="st">"id"</span>, <span class="st">"name"</span>])</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df.show()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>df.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  1|  Goku|
+|  2|Naruto|
++---+------+
+
+root
+ |-- id: long (nullable = true)
+ |-- name: string (nullable = true)
+</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="735d6cac-922c-44a5-bd19-838c05ef17e1" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.write<span class="op">\</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>.csv(<span class="st">"df_csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>AnalysisException: [PATH_ALREADY_EXISTS] Path file:/home/pedro-wsl/Learning-PySpark/nbs/df_csv already exists. Set mode as "overwrite" to overwrite the existing path.</code></pre>
+</div>
+</div>
+<p>It will give us an error because the file already exists, so we need to overwrite it:</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df.write<span class="op">\</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>.csv(<span class="st">"df_csv"</span>, mode<span class="op">=</span><span class="st">"overwrite"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s check:</p>
+<div class="cell" data-outputid="7ac0d820-8cbc-4183-d1f3-6a098f3d97ef" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>spark.read.schema(df.schema)<span class="op">\</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>.<span class="bu">format</span>(<span class="st">"csv"</span>)<span class="op">\</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>.load(<span class="st">"df_csv"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  2|Naruto|
+|  1|  Goku|
++---+------+
+</code></pre>
+</div>
+</div>
+<p>And how to add more items to the file?</p>
+<p>Let’s create another dataframe:</p>
+<div class="cell" data-outputid="b039492e-9c76-4303-df87-fe9757e13448" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> spark.createDataFrame([(<span class="st">"3"</span>, <span class="st">"Gojo"</span>), (<span class="st">"4"</span>, <span class="st">"Kirito"</span>)], schema<span class="op">=</span>[<span class="st">"id"</span>, <span class="st">"name"</span>])</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>df2.show()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>df2.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  3|  Gojo|
+|  4|Kirito|
++---+------+
+
+root
+ |-- id: string (nullable = true)
+ |-- name: string (nullable = true)
+</code></pre>
+</div>
+</div>
+<p>Then we have to append it to the file:</p>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df2.write<span class="op">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>.csv(<span class="st">"df_csv"</span>, mode<span class="op">=</span><span class="st">"append"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-outputid="60616487-e025-407b-d3fe-8514ff8ad0bb" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>spark.read.schema(df.schema)<span class="op">\</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>.<span class="bu">format</span>(<span class="st">"csv"</span>)<span class="op">\</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>.load(<span class="st">"df_csv"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  2|Naruto|
+|  4|Kirito|
+|  3|  Gojo|
+|  1|  Goku|
++---+------+
+</code></pre>
+</div>
+</div>
+<section id="file-structure" class="level3">
+<h3 class="anchored" data-anchor-id="file-structure">File structure:</h3>
+<p>Let’s check the csv file structure:</p>
+<div class="cell" data-outputid="0941e7e4-14fd-4c2e-e24e-fc332c2e172f" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span><span class="bu">file</span> <span class="op">-</span>b df_csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>directory</code></pre>
+</div>
+</div>
+<p>It’s a folder, let’s check it’s content:</p>
+<div class="cell" data-outputid="427384c0-c521-4b4f-aa39-a1965d5e4ff5" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>la df_csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>total 52
+drwxr-xr-x 2 pedro-wsl pedro-wsl 4096 Oct 25 15:13 .
+drwxr-xr-x 5 pedro-wsl pedro-wsl 4096 Oct 25 15:13 ..
+-rw-r--r-- 1 pedro-wsl pedro-wsl    8 Oct 25 15:13 ._SUCCESS.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl    8 Oct 25 15:13 .part-00000-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl    8 Oct 25 15:13 .part-00000-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl   12 Oct 25 15:13 .part-00005-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl   12 Oct 25 15:13 .part-00005-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl   12 Oct 25 15:13 .part-00011-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl   12 Oct 25 15:13 .part-00011-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl    0 Oct 25 15:13 _SUCCESS
+-rw-r--r-- 1 pedro-wsl pedro-wsl    0 Oct 25 15:13 part-00000-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv
+-rw-r--r-- 1 pedro-wsl pedro-wsl    0 Oct 25 15:13 part-00000-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv
+-rw-r--r-- 1 pedro-wsl pedro-wsl    7 Oct 25 15:13 part-00005-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv
+-rw-r--r-- 1 pedro-wsl pedro-wsl    7 Oct 25 15:13 part-00005-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv
+-rw-r--r-- 1 pedro-wsl pedro-wsl    9 Oct 25 15:13 part-00011-1d555ec3-1910-480c-b90f-23b1a97a974c-c000.csv
+-rw-r--r-- 1 pedro-wsl pedro-wsl    9 Oct 25 15:13 part-00011-ab8126fc-3fdb-44d1-8d0a-c7556dbe19c0-c000.csv</code></pre>
+</div>
+</div>
+<p>It’s divided in partitions</p>
+<p>The number of partitions is the same number of rows we have on <code>df</code></p>
+<p>This happens because spark have a <code>driver node</code> that divide the workload between <code>worker nodes</code>, like:</p>
+<pre><code>  Driver Node
+ /   |    |   \
+W1   W2   W3   W4</code></pre>
+<p>We can also specify the number of partitions we want:</p>
+<div class="cell" data-outputid="65e29719-3e64-4905-e44a-84a14ebbbf23" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(df.repartition)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on method repartition in module pyspark.sql.dataframe:
+
+repartition(numPartitions: Union[int, ForwardRef('ColumnOrName')], *cols: 'ColumnOrName') -&gt; 'DataFrame' method of pyspark.sql.dataframe.DataFrame instance
+    Returns a new :class:`DataFrame` partitioned by the given partitioning expressions. The
+    resulting :class:`DataFrame` is hash partitioned.
+    
+    .. versionadded:: 1.3.0
+    
+    .. versionchanged:: 3.4.0
+        Supports Spark Connect.
+    
+    Parameters
+    ----------
+    numPartitions : int
+        can be an int to specify the target number of partitions or a Column.
+        If it is a Column, it will be used as the first partitioning column. If not specified,
+        the default number of partitions is used.
+    cols : str or :class:`Column`
+        partitioning columns.
+    
+        .. versionchanged:: 1.6.0
+           Added optional arguments to specify the partitioning columns. Also made numPartitions
+           optional if partitioning columns are specified.
+    
+    Returns
+    -------
+    :class:`DataFrame`
+        Repartitioned DataFrame.
+    
+    Examples
+    --------
+    &gt;&gt;&gt; df = spark.createDataFrame(
+    ...     [(14, "Tom"), (23, "Alice"), (16, "Bob")], ["age", "name"])
+    
+    Repartition the data into 10 partitions.
+    
+    &gt;&gt;&gt; df.repartition(10).rdd.getNumPartitions()
+    10
+    
+    Repartition the data into 7 partitions by 'age' column.
+    
+    &gt;&gt;&gt; df.repartition(7, "age").rdd.getNumPartitions()
+    7
+    
+    Repartition the data into 7 partitions by 'age' and 'name columns.
+    
+    &gt;&gt;&gt; df.repartition(3, "name", "age").rdd.getNumPartitions()
+    3
+</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="f8d868f8-2e17-4fed-9b01-f942c573c0c3" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.createDataFrame([(<span class="dv">1</span>, <span class="st">"Goku"</span>), (<span class="dv">2</span>, <span class="st">"Naruto"</span>)], schema<span class="op">=</span>[<span class="st">"id"</span>, <span class="st">"name"</span>])</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>df.show()</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>df.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  1|  Goku|
+|  2|Naruto|
++---+------+
+
+root
+ |-- id: long (nullable = true)
+ |-- name: string (nullable = true)
+</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="7282c62c-cb0b-4680-e2f7-44d428b46559" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>df_1part <span class="op">=</span> df.repartition(<span class="dv">1</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>df_1part.rdd.getNumPartitions()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>1</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>df_1part<span class="op">\</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>.write<span class="op">\</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>.csv(<span class="st">"df_csv_1part"</span>, mode<span class="op">=</span><span class="st">"overwrite"</span>, header<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-outputid="c70b6353-cb8a-4b7b-b3f9-1f393414c2c9" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>spark.read<span class="op">\</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>.option(<span class="st">"header"</span>, <span class="va">True</span>)<span class="op">\</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>.<span class="bu">format</span>(<span class="st">"csv"</span>)<span class="op">\</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>.load(<span class="st">"df_csv_1part"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+---+------+
+| id|  name|
++---+------+
+|  1|  Goku|
+|  2|Naruto|
++---+------+
+</code></pre>
+</div>
+</div>
+<div class="cell" data-outputid="3970ddb9-59e9-4b14-cebd-56f45e5a58e7" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>la df_csv_1part<span class="op">/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>total 20
+drwxr-xr-x 2 pedro-wsl pedro-wsl 4096 Oct 25 15:13 .
+drwxr-xr-x 6 pedro-wsl pedro-wsl 4096 Oct 25 15:13 ..
+-rw-r--r-- 1 pedro-wsl pedro-wsl    8 Oct 25 15:13 ._SUCCESS.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl   12 Oct 25 15:13 .part-00000-48e65ab0-a0d2-4a48-8f0c-e0b85439f207-c000.csv.crc
+-rw-r--r-- 1 pedro-wsl pedro-wsl    0 Oct 25 15:13 _SUCCESS
+-rw-r--r-- 1 pedro-wsl pedro-wsl   24 Oct 25 15:13 part-00000-48e65ab0-a0d2-4a48-8f0c-e0b85439f207-c000.csv</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
